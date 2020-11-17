@@ -12,19 +12,25 @@ final class CubeView: UIView {
     
     let baseLayer = CATransformLayer()
     let size: CGFloat = 200
-    lazy var frontLayer: CALayer = {
+    lazy var frontLayer: CAGradientLayer = {
         let transform = CATransform3DMakeTranslation(0, 0, size / 2)
-        return createFaceLayer(with: transform, color: UIColor(white: 0.4, alpha: 1.0))
+        return createGradientFaceLayer(with: transform,
+                                       colors: [UIColor(white: 0.4, alpha: 1.0),
+                                                UIColor(white: 0.6, alpha: 1.0)])
     }()
-    lazy var rightLayer: CALayer = {
+    lazy var rightLayer: CAGradientLayer = {
         var transform = CATransform3DMakeTranslation(size / 2, 0, 0)
         transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 0, 1, 0)
-        return createFaceLayer(with: transform, color: UIColor(white: 0.7, alpha: 1.0))
+        return createGradientFaceLayer(with: transform,
+                                       colors: [UIColor(white: 0.6, alpha: 1.0),
+                                                UIColor(white: 0.8, alpha: 1.0)])
     }()
-    lazy var topLayer: CALayer = {
+    lazy var topLayer: CAGradientLayer = {
         var transform = CATransform3DMakeTranslation(0, -size / 2, 0)
         transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 1, 0, 0)
-        return createFaceLayer(with: transform, color: .white)
+        return createGradientFaceLayer(with: transform,
+                                       colors: [UIColor(white: 1.0, alpha: 1.0),
+                                                UIColor(white: 0.8, alpha: 1.0)])
     }()
     lazy var leftLayer: CALayer = {
         var transform = CATransform3DMakeTranslation(-size / 2, 0, 0)
@@ -68,6 +74,16 @@ final class CubeView: UIView {
         transform = CATransform3DRotate(transform, -30 * CGFloat.pi / 180, 1, 0, 0)
         transform = CATransform3DRotate(transform, 15 * CGFloat.pi / 180, 0, 0, 1)
         baseLayer.transform = transform
+    }
+    
+    func createGradientFaceLayer(with transform: CATransform3D, colors: [UIColor]) -> CAGradientLayer {
+        
+        let layer = CAGradientLayer()
+        layer.frame = CGRect(x: -size / 2, y: -size / 2, width: size, height: size)
+        layer.colors = colors.map { $0.cgColor }
+        layer.transform = transform
+        layer.allowsEdgeAntialiasing = true
+        return layer
     }
     
     func createFaceLayer(with transform: CATransform3D, color: UIColor) -> CALayer {
