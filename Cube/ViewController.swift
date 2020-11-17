@@ -9,9 +9,20 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    let cubeView = CubeView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        cubeView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(cubeView)
+
+        NSLayoutConstraint.activate([
+            cubeView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            cubeView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            cubeView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            cubeView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        ])
     }
 }
