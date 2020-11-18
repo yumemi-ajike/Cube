@@ -15,6 +15,7 @@
 		6B653622255E0B5600382077 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6B653620255E0B5600382077 /* LaunchScreen.storyboard */; };
 		6B65362A255E0E4E00382077 /* CubeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B653629255E0E4E00382077 /* CubeView.swift */; };
 		6B65362C2563AFB100382077 /* WireCubeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B65362B2563AFB100382077 /* WireCubeView.swift */; };
+		6B65362E2564B4A400382077 /* GroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B65362D2564B4A400382077 /* GroundView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		6B653623255E0B5600382077 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6B653629255E0E4E00382077 /* CubeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeView.swift; sourceTree = "<group>"; };
 		6B65362B2563AFB100382077 /* WireCubeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireCubeView.swift; sourceTree = "<group>"; };
+		6B65362D2564B4A400382077 /* GroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroundView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				6B653617255E0B5300382077 /* SceneDelegate.swift */,
 				6B653619255E0B5300382077 /* ViewController.swift */,
 				6B653629255E0E4E00382077 /* CubeView.swift */,
+				6B65362D2564B4A400382077 /* GroundView.swift */,
 				6B65362B2563AFB100382077 /* WireCubeView.swift */,
 				6B65361B255E0B5300382077 /* Main.storyboard */,
 				6B65361E255E0B5600382077 /* Assets.xcassets */,
@@ -149,6 +152,7 @@
 				6B653616255E0B5300382077 /* AppDelegate.swift in Sources */,
 				6B653618255E0B5300382077 /* SceneDelegate.swift in Sources */,
 				6B65362A255E0E4E00382077 /* CubeView.swift in Sources */,
+				6B65362E2564B4A400382077 /* GroundView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
