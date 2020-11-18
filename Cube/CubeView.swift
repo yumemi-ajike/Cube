@@ -10,8 +10,10 @@ import UIKit
 
 final class CubeView: UIView {
     
+    let groundLayer = CATransformLayer()
     let baseLayer = CATransformLayer()
     let size: CGFloat = 200
+    
     lazy var frontLayer: CAGradientLayer = {
         let transform = CATransform3DMakeTranslation(0, 0, size / 2)
         return createGradientFaceLayer(with: transform,
@@ -59,6 +61,8 @@ final class CubeView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        groundLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+        
         baseLayer.addSublayer(frontLayer)
         baseLayer.addSublayer(rightLayer)
         baseLayer.addSublayer(topLayer)
@@ -66,6 +70,8 @@ final class CubeView: UIView {
         baseLayer.addSublayer(bottomLayer)
         baseLayer.addSublayer(backLayer)
         baseLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+        
+        layer.addSublayer(groundLayer)
         layer.addSublayer(baseLayer)
         
         var transform = CATransform3DIdentity
