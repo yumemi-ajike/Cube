@@ -50,6 +50,39 @@ final class CubeView: UIView {
         return createFaceLayer(with: transform, color: .clear)
     }()
     
+    lazy var shadowLayer: CALayer = {
+        var transform = CATransform3DMakeTranslation(size / 2, size / 2, size / 2)
+        transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 1, 0, 0)
+        let layer = CALayer()
+        layer.frame = CGRect(x: -size, y: -size, width: size * 2, height: size * 2)
+        layer.transform = transform
+        layer.allowsEdgeAntialiasing = true
+        return layer
+    }()
+    lazy var shadowShapeLayer: CAShapeLayer = {
+        let layer = CAShapeLayer()
+        layer.frame = CGRect(x: 0, y: 0, width: size * 2, height: size * 2)
+        layer.fillColor = UIColor.black.cgColor
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: 0, y: size))
+        path.addLine(to: CGPoint(x: size, y: size))
+        path.addLine(to: CGPoint(x: size, y: 0))
+        path.addLine(to: CGPoint(x: size / 2 * 3, y: size * 2))
+        path.addLine(to: CGPoint(x: size / 2, y: size * 2))
+        path.addLine(to: CGPoint(x: 0, y: size))
+        path.closeSubpath()
+        layer.path = path
+        layer.allowsEdgeAntialiasing = true
+        return layer
+    }()
+    lazy var shadowGradientLayer: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.frame = CGRect(x: 0, y: 0, width: size * 2, height: size * 2)
+        layer.colors = [UIColor(white: 0, alpha: 0.4), .clear].map { $0.cgColor }
+        layer.allowsEdgeAntialiasing = true
+        return layer
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -60,6 +93,10 @@ final class CubeView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
+        shadowLayer.addSublayer(shadowGradientLayer)
+        shadowGradientLayer.mask = shadowShapeLayer
+        baseLayer.addSublayer(shadowLayer)
         
         groundLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
         
