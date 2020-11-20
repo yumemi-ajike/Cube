@@ -50,6 +50,23 @@ final class CubeView: UIView {
         return createFaceLayer(with: transform, color: .clear)
     }()
     
+    lazy var frontReflectLayer: CAGradientLayer = {
+        var transform = CATransform3DIdentity
+        transform = CATransform3DTranslate(transform, 0, size, size / 2)
+        transform = CATransform3DRotate(transform, CGFloat.pi, 0, 1, 0)
+        let layer = createGradientFaceLayer(with: transform,
+                                            colors: [UIColor(white: 0, alpha: 0.2), .clear])
+        return layer
+    }()
+    lazy var rightReflectLayer: CAGradientLayer = {
+        var transform = CATransform3DIdentity
+        transform = CATransform3DTranslate(transform, size / 2, size, 0)
+        transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 0, 1, 0)
+        let layer = createGradientFaceLayer(with: transform,
+                                            colors: [UIColor(white: 0, alpha: 0.2), .clear])
+        return layer
+    }()
+    
     lazy var shadowLayer: CALayer = {
         var transform = CATransform3DMakeTranslation(size / 2, size / 2, size / 2)
         transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 1, 0, 0)
@@ -94,6 +111,8 @@ final class CubeView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        baseLayer.addSublayer(frontReflectLayer)
+        baseLayer.addSublayer(rightReflectLayer)
         shadowLayer.addSublayer(shadowGradientLayer)
         shadowGradientLayer.mask = shadowShapeLayer
         baseLayer.addSublayer(shadowLayer)
