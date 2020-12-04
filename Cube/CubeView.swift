@@ -43,7 +43,17 @@ final class CubeView: UIView {
     lazy var bottomLayer: CALayer = {
         var transform = CATransform3DMakeTranslation(0, size / 2, 0)
         transform = CATransform3DRotate(transform, -CGFloat.pi / 2 , 1, 0, 0)
-        return createFaceLayer(with: transform, color: .clear)
+        let layer = createFaceLayer(with: transform, color: .clear)
+        let shadowRadius: CGFloat = 3
+        let shadowBaseLayer = CALayer()
+        shadowBaseLayer.frame = CGRect(x: cornerRadius, y: cornerRadius, width: size - cornerRadius * 2, height: size - cornerRadius * 2)
+        shadowBaseLayer.backgroundColor = UIColor.white.cgColor
+        layer.addSublayer(shadowBaseLayer)
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowRadius = shadowRadius
+        layer.shadowOpacity = 1
+        layer.shadowOffset = CGSize(width: 1, height: -2)
+        return layer
     }()
     lazy var backLayer: CALayer = {
         var transform = CATransform3DMakeTranslation(0, 0, -size / 2)
