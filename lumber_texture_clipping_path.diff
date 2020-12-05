@@ -1,0 +1,367 @@
+diff --git a/Cube.xcodeproj/project.pbxproj b/Cube.xcodeproj/project.pbxproj
+index 18a340e..a76e088 100644
+--- a/Cube.xcodeproj/project.pbxproj
++++ b/Cube.xcodeproj/project.pbxproj
+@@ -7,6 +7,7 @@
+ 	objects = {
+ 
+ /* Begin PBXBuildFile section */
++		0841350D257B29800054C13E /* LumberTexture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0841350C257B29800054C13E /* LumberTexture.swift */; };
+ 		6B653616255E0B5300382077 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B653615255E0B5300382077 /* AppDelegate.swift */; };
+ 		6B653618255E0B5300382077 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B653617255E0B5300382077 /* SceneDelegate.swift */; };
+ 		6B65361A255E0B5300382077 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B653619255E0B5300382077 /* ViewController.swift */; };
+@@ -19,6 +20,7 @@
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXFileReference section */
++		0841350C257B29800054C13E /* LumberTexture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumberTexture.swift; sourceTree = "<group>"; };
+ 		6B653612255E0B5300382077 /* Cube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cube.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		6B653615255E0B5300382077 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+ 		6B653617255E0B5300382077 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+@@ -67,6 +69,7 @@
+ 				6B653619255E0B5300382077 /* ViewController.swift */,
+ 				6B653629255E0E4E00382077 /* CubeView.swift */,
+ 				6B65362D2564B4A400382077 /* GroundView.swift */,
++				0841350C257B29800054C13E /* LumberTexture.swift */,
+ 				6B65362B2563AFB100382077 /* WireCubeView.swift */,
+ 				6B65361B255E0B5300382077 /* Main.storyboard */,
+ 				6B65361E255E0B5600382077 /* Assets.xcassets */,
+@@ -151,6 +154,7 @@
+ 				6B65361A255E0B5300382077 /* ViewController.swift in Sources */,
+ 				6B653616255E0B5300382077 /* AppDelegate.swift in Sources */,
+ 				6B653618255E0B5300382077 /* SceneDelegate.swift in Sources */,
++				0841350D257B29800054C13E /* LumberTexture.swift in Sources */,
+ 				6B65362A255E0E4E00382077 /* CubeView.swift in Sources */,
+ 				6B65362E2564B4A400382077 /* GroundView.swift in Sources */,
+ 			);
+diff --git a/Cube/CubeView.swift b/Cube/CubeView.swift
+index 8ee4374..a4b2fe6 100644
+--- a/Cube/CubeView.swift
++++ b/Cube/CubeView.swift
+@@ -7,6 +7,7 @@
+ //
+ 
+ import UIKit
++import CoreGraphics
+ 
+ final class CubeView: UIView {
+     
+@@ -18,22 +19,22 @@ final class CubeView: UIView {
+     lazy var frontLayer: CALayer = {
+         let transform = CATransform3DMakeTranslation(0, 0, size / 2)
+         return createGradientFaceLayer(with: transform,
+-                                       colors: [UIColor(white: 0.4, alpha: 1.0),
+-                                                UIColor(white: 0.6, alpha: 1.0)])
++                                       colors: [UIColor(white: 0, alpha: 0.6),
++                                                UIColor(white: 0, alpha: 0.4)])
+     }()
+     lazy var rightLayer: CALayer = {
+         var transform = CATransform3DMakeTranslation(size / 2, 0, 0)
+         transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 0, 1, 0)
+         return createGradientFaceLayer(with: transform,
+-                                       colors: [UIColor(white: 0.6, alpha: 1.0),
+-                                                UIColor(white: 0.8, alpha: 1.0)])
++                                       colors: [UIColor(white: 0, alpha: 0.4),
++                                                UIColor(white: 0, alpha: 0.2)])
+     }()
+     lazy var topLayer: CALayer = {
+         var transform = CATransform3DMakeTranslation(0, -size / 2, 0)
+         transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 1, 0, 0)
+         return createGradientFaceLayer(with: transform,
+-                                       colors: [UIColor(white: 1.0, alpha: 1.0),
+-                                                UIColor(white: 0.8, alpha: 1.0)])
++                                       colors: [UIColor(white: 0, alpha: 0),
++                                                UIColor(white: 0, alpha: 0.2)])
+     }()
+     lazy var leftLayer: CALayer = {
+         var transform = CATransform3DMakeTranslation(-size / 2, 0, 0)
+@@ -257,6 +258,15 @@ final class CubeView: UIView {
+         topLayer.addSublayer(topBottomLayer)
+         topLayer.addSublayer(topRightLayer)
+         topLayer.addSublayer(topLeftLayer)
++        
++        #if true
++        let texture = LumberTexture(side: self.size)
++        let topImage = texture.lumberTopImage()
++        let sideImage = texture.lumberSideImage()
++        topLayer.contents = topImage
++        frontLayer.contents = sideImage
++        rightLayer.contents = texture.lumberStrechImage(topImage: topImage, sideImage: sideImage)
++        #endif
+ 
+         baseLayer.addSublayer(frontLayer)
+         baseLayer.addSublayer(rightLayer)
+@@ -284,6 +294,7 @@ final class CubeView: UIView {
+         gradientLayer.frame = CGRect(x: 0, y: 0, width: size, height: size)
+         gradientLayer.colors = colors.map { $0.cgColor }
+         layer.frame = CGRect(x: -size / 2, y: -size / 2, width: size, height: size)
++        layer.backgroundColor = UIColor.white.cgColor
+         layer.cornerRadius = cornerRadius
+         layer.masksToBounds = true
+         layer.transform = transform
+diff --git a/Cube/LumberTexture.swift b/Cube/LumberTexture.swift
+index 4d274e8..bb5eac0 100644
+--- a/Cube/LumberTexture.swift
++++ b/Cube/LumberTexture.swift
+@@ -6,4 +6,260 @@
+ //  Copyright © 2020 Atsushi Jike. All rights reserved.
+ //
+ 
+-import Foundation
++import UIKit
++import CoreGraphics
++
++final class LumberTexture {
++    struct Ring {
++        let distance: CGFloat
++        let width: CGFloat
++        let depth: CGFloat
++    }
++    let side: CGFloat
++    let baseColorComponents: [CGFloat] = [1, 1, 0]
++    let ringColorComponents: [CGFloat] = [1, 0, 0]
++    private let roughRings: [Ring]
++    private let smoothRings: [Ring]
++    
++    init(side: CGFloat) {
++        self.side = side
++        var roughRings: [Ring] = []
++        var smoothRings: [Ring] = []
++        var pointer: CGFloat = 0
++        
++        repeat {
++            let distance = CGFloat(Float.random(in: 2 ... 3))
++            let width = CGFloat(Float.random(in: 0.5 ... 2))
++            let depth = CGFloat(Float.random(in: 0.2 ... 0.4))
++            if (pointer + distance + width / 2) < (side * sqrt(2)) {
++                smoothRings.append(Ring(distance: distance, width: width, depth: depth))
++                pointer += distance
++            } else {
++                break
++            }
++            
++        } while(pointer < (side * sqrt(2)))
++        self.smoothRings = smoothRings
++        
++        pointer = 0
++        repeat {
++            let distance = CGFloat(Float.random(in: 5 ... 30))
++            let width = CGFloat(Float.random(in: 2 ... 12))
++            let depth = CGFloat(Float.random(in: 0.4 ... 0.6))
++            if (pointer + distance + width / 2) < (side * sqrt(2)) {
++                roughRings.append(Ring(distance: distance, width: width, depth: depth))
++                pointer += distance
++            } else {
++                break
++            }
++            
++        } while(pointer < (side * sqrt(2)))
++        self.roughRings = roughRings
++    }
++    
++    func lumberTopImage() -> CGImage? {
++        
++        UIGraphicsBeginImageContext(CGSize(width: side, height: side))
++        guard let context = UIGraphicsGetCurrentContext() else { return nil }
++        
++        // Draw base color
++        context.setFillColor(UIColor(red: baseColorComponents[0],
++                                     green: baseColorComponents[1],
++                                     blue: baseColorComponents[2],
++                                     alpha: 1).cgColor)
++        context.fill(CGRect(x: 0, y: 0, width: side, height: side))
++        
++        // Draw annual tree rings
++        [smoothRings, roughRings].forEach { rings in
++            var pointer: CGFloat = 0
++            rings.forEach { ring in
++                pointer += ring.distance
++                
++                context.setLineWidth(ring.width)
++                let startPoint = CGPoint(x: pointer, y: side)
++                let endPoint = CGPoint(x: 0, y: side - pointer)
++                context.move(to: startPoint)
++                context.addCurve(to: endPoint,
++                                  control1: CGPoint(x: pointer, y: side - pointer),
++                                  control2: endPoint)
++                context.setStrokeColor(UIColor(red: ringColorComponents[0],
++                                               green: ringColorComponents[1],
++                                               blue: ringColorComponents[2],
++                                               alpha: ring.depth).cgColor)
++                context.strokePath()
++            }
++        }
++        
++        return context.makeImage()
++    }
++    
++    func lumberSideImage() -> CGImage? {
++        
++        UIGraphicsBeginImageContext(CGSize(width: side * sqrt(2), height: side))
++        guard let context = UIGraphicsGetCurrentContext() else { return nil }
++        
++        // Draw base color
++        context.setFillColor(UIColor(red: baseColorComponents[0],
++                                     green: baseColorComponents[1],
++                                     blue: baseColorComponents[2],
++                                     alpha: 1).cgColor)
++        context.fill(CGRect(x: 0, y: 0, width: side * sqrt(2), height: side))
++        
++        // Draw smooth annual tree rings
++        var pointer: CGFloat = 0
++        smoothRings.forEach { ring in
++            pointer += ring.distance
++            
++            context.setLineWidth(ring.width)
++            let startPoint = CGPoint(x: pointer, y: 0)
++            let endPoint = CGPoint(x: pointer, y: side)
++            context.move(to: startPoint)
++            context.addLine(to: endPoint)
++            context.setStrokeColor(UIColor(red: ringColorComponents[0],
++                                           green: ringColorComponents[1],
++                                           blue: ringColorComponents[2],
++                                           alpha: ring.depth).cgColor)
++            context.strokePath()
++        }
++        
++        // Draw rough annual tree rings
++        pointer = 0
++        roughRings.forEach { ring in
++            pointer += ring.distance
++            
++            context.setLineWidth(ring.width)
++            let startPoint = CGPoint(x: pointer, y: 0)
++            let endPoint = CGPoint(x: pointer, y: side)
++            context.move(to: startPoint)
++            context.addLine(to: endPoint)
++            context.setStrokeColor(UIColor(red: ringColorComponents[0],
++                                           green: ringColorComponents[1],
++                                           blue: ringColorComponents[2],
++                                           alpha: ring.depth).cgColor)
++            context.strokePath()
++        }
++        
++        // Distort the pattern
++        if let image = context.makeImage() {
++            
++            let ciimage = CIImage(cgImage: image)
++            let filter = CIFilter(name: "CITwirlDistortion")
++            filter?.setValue(ciimage, forKey: kCIInputImageKey)
++            filter?.setValue(CIVector(x: side, y: -side / 2), forKey: kCIInputCenterKey)
++            filter?.setValue(side * 1.3, forKey: kCIInputRadiusKey)
++            filter?.setValue(CGFloat.pi / 8, forKey: kCIInputAngleKey)
++            
++            if let outputImage = filter?.outputImage {
++                let cicontext = CIContext(options: nil)
++                return cicontext.createCGImage(outputImage, from: CGRect(x: 0, y: 0, width: side, height: side))
++            }
++            
++            return image
++        }
++        return nil
++    }
++    
++    func lumberStrechImage(topImage: CGImage?, sideImage: CGImage?) -> CGImage? {
++        
++        UIGraphicsBeginImageContext(CGSize(width: side, height: side))
++        guard let context = UIGraphicsGetCurrentContext() else { return nil }
++        
++        // Draw wood fibers
++        var pointer: CGFloat = 0
++        repeat {
++            let distance = CGFloat(Float.random(in: 2 ... 3))
++            let width = CGFloat(Float.random(in: 0.5 ... 2))
++            let depth = CGFloat(Float.random(in: 0.2 ... 0.3))
++            if (pointer + distance + width / 2) < side {
++                pointer += distance
++
++                context.setLineWidth(width)
++                let startPoint = CGPoint(x: pointer, y: 0)
++                let endPoint = CGPoint(x: pointer, y: side)
++                context.move(to: startPoint)
++                context.addLine(to: endPoint)
++                context.setStrokeColor(UIColor(red: ringColorComponents[0],
++                                               green: ringColorComponents[1],
++                                               blue: ringColorComponents[2],
++                                               alpha: depth).cgColor)
++                context.strokePath()
++            } else {
++                break
++            }
++
++        } while(pointer < side)
++        
++        if let topImage = topImage,
++           let tilingImage = topTilingImage(topImage: topImage) {
++            
++            let clipPath = CGMutablePath()
++            clipPath.move(to: CGPoint(x: 0, y: 0))
++            clipPath.addLine(to: CGPoint(x: side, y: 0))
++            clipPath.addLine(to: CGPoint(x: side, y: side))
++            clipPath.addLine(to: CGPoint(x: side / 3 * 2, y: side))
++            clipPath.addCurve(to: CGPoint(x: 0, y: side / 3),
++                              control1: CGPoint(x: side / 3 * 2, y: side / 3),
++                              control2: CGPoint(x: 0, y: side / 3))
++            clipPath.addLine(to: CGPoint(x: 0, y: 0))
++            clipPath.closeSubpath()
++
++            context.saveGState()
++            context.addPath(clipPath)
++            context.clip()
++            context.draw(tilingImage, in: CGRect(x: 0, y: 0, width: side, height: side))
++            context.restoreGState()
++        }
++        
++        if let sideImage = sideImage,
++           let tilingImage = sideTilingImage(sideImage: sideImage) {
++            
++            let clipPath = CGMutablePath()
++            clipPath.move(to: CGPoint(x: 0, y: side))
++            clipPath.addLine(to: CGPoint(x: 0, y: side / 3))
++            clipPath.addCurve(to: CGPoint(x: side / 3 * 2, y: side),
++                              control1: CGPoint(x: side / 3 * 2, y: side / 3),
++                              control2: CGPoint(x: side / 3 * 2, y: side))
++            clipPath.closeSubpath()
++
++            context.saveGState()
++            context.addPath(clipPath)
++            context.clip()
++            context.draw(tilingImage, in: CGRect(x: 0, y: 0, width: side, height: side))
++            context.restoreGState()
++        }
++        
++        return context.makeImage()
++    }
++    
++    private func topTilingImage(topImage: CGImage) -> CGImage? {
++        
++        UIGraphicsBeginImageContext(CGSize(width: side, height: side))
++        guard let context = UIGraphicsGetCurrentContext() else { return nil }
++        
++        if let cropImage = topImage.cropping(to: CGRect(x: side - 1, y: 0, width: 1, height: side)) {
++            
++            context.saveGState()
++            context.rotate(by: -CGFloat.pi / 2)
++            context.draw(cropImage, in: CGRect(x: 0, y: 0, width: side, height: side), byTiling: true)
++            context.restoreGState()
++            
++            return context.makeImage()
++        }
++        return nil
++    }
++    
++    private func sideTilingImage(sideImage: CGImage) -> CGImage? {
++        
++        UIGraphicsBeginImageContext(CGSize(width: side, height: side))
++        guard let context = UIGraphicsGetCurrentContext() else { return nil }
++        
++        if let cropImage = sideImage.cropping(to: CGRect(x: side - 1, y: 0, width: 1, height: side)) {
++            
++            context.saveGState()
++            context.draw(cropImage, in: CGRect(x: 0, y: 0, width: side, height: side), byTiling: true)
++            context.restoreGState()
++            return context.makeImage()
++        }
++        return nil
++    }
++}
