@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0841350D257B29800054C13E /* LumberTexture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0841350C257B29800054C13E /* LumberTexture.swift */; };
 		6B653616255E0B5300382077 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B653615255E0B5300382077 /* AppDelegate.swift */; };
 		6B653618255E0B5300382077 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B653617255E0B5300382077 /* SceneDelegate.swift */; };
 		6B65361A255E0B5300382077 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B653619255E0B5300382077 /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0841350C257B29800054C13E /* LumberTexture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumberTexture.swift; sourceTree = "<group>"; };
 		6B653612255E0B5300382077 /* Cube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cube.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B653615255E0B5300382077 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6B653617255E0B5300382077 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 				6B653619255E0B5300382077 /* ViewController.swift */,
 				6B653629255E0E4E00382077 /* CubeView.swift */,
 				6B65362D2564B4A400382077 /* GroundView.swift */,
+				0841350C257B29800054C13E /* LumberTexture.swift */,
 				6B65362B2563AFB100382077 /* WireCubeView.swift */,
 				6B65361B255E0B5300382077 /* Main.storyboard */,
 				6B65361E255E0B5600382077 /* Assets.xcassets */,
@@ -151,6 +154,7 @@
 				6B65361A255E0B5300382077 /* ViewController.swift in Sources */,
 				6B653616255E0B5300382077 /* AppDelegate.swift in Sources */,
 				6B653618255E0B5300382077 /* SceneDelegate.swift in Sources */,
+				0841350D257B29800054C13E /* LumberTexture.swift in Sources */,
 				6B65362A255E0E4E00382077 /* CubeView.swift in Sources */,
 				6B65362E2564B4A400382077 /* GroundView.swift in Sources */,
 			);

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreGraphics
 
 final class CubeView: UIView {
     
@@ -18,22 +19,22 @@ final class CubeView: UIView {
     lazy var frontLayer: CALayer = {
         let transform = CATransform3DMakeTranslation(0, 0, size / 2)
         return createGradientFaceLayer(with: transform,
-                                       colors: [UIColor(white: 0.4, alpha: 1.0),
-                                                UIColor(white: 0.6, alpha: 1.0)])
+                                       colors: [UIColor(white: 0, alpha: 0.6),
+                                                UIColor(white: 0, alpha: 0.4)])
     }()
     lazy var rightLayer: CALayer = {
         var transform = CATransform3DMakeTranslation(size / 2, 0, 0)
         transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 0, 1, 0)
         return createGradientFaceLayer(with: transform,
-                                       colors: [UIColor(white: 0.6, alpha: 1.0),
-                                                UIColor(white: 0.8, alpha: 1.0)])
+                                       colors: [UIColor(white: 0, alpha: 0.4),
+                                                UIColor(white: 0, alpha: 0.2)])
     }()
     lazy var topLayer: CALayer = {
         var transform = CATransform3DMakeTranslation(0, -size / 2, 0)
         transform = CATransform3DRotate(transform, CGFloat.pi / 2 , 1, 0, 0)
         return createGradientFaceLayer(with: transform,
-                                       colors: [UIColor(white: 1.0, alpha: 1.0),
-                                                UIColor(white: 0.8, alpha: 1.0)])
+                                       colors: [UIColor(white: 0, alpha: 0),
+                                                UIColor(white: 0, alpha: 0.2)])
     }()
     lazy var leftLayer: CALayer = {
         var transform = CATransform3DMakeTranslation(-size / 2, 0, 0)
@@ -227,6 +228,9 @@ final class CubeView: UIView {
         layer.allowsEdgeAntialiasing = true
         return layer
     }()
+    private lazy var texture: LumberTexture = {
+        return LumberTexture(side: self.size)
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -275,15 +279,19 @@ final class CubeView: UIView {
         transform = CATransform3DRotate(transform, -30 * CGFloat.pi / 180, 1, 0, 0)
         transform = CATransform3DRotate(transform, 15 * CGFloat.pi / 180, 0, 0, 1)
         baseLayer.transform = transform
+        
+        updateTexture()
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(updateTextureAction)))
     }
     
-    func createGradientFaceLayer(with transform: CATransform3D, colors: [UIColor]) -> CALayer {
+    private func createGradientFaceLayer(with transform: CATransform3D, colors: [UIColor]) -> CALayer {
         
         let layer = CALayer()
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = CGRect(x: 0, y: 0, width: size, height: size)
         gradientLayer.colors = colors.map { $0.cgColor }
         layer.frame = CGRect(x: -size / 2, y: -size / 2, width: size, height: size)
+        layer.backgroundColor = UIColor.white.cgColor
         layer.cornerRadius = cornerRadius
         layer.masksToBounds = true
         layer.transform = transform
@@ -292,7 +300,7 @@ final class CubeView: UIView {
         return layer
     }
     
-    func createFaceLayer(with transform: CATransform3D, color: UIColor) -> CALayer {
+    private func createFaceLayer(with transform: CATransform3D, color: UIColor) -> CALayer {
         
         let layer = CALayer()
         layer.frame = CGRect(x: -size / 2, y: -size / 2, width: size, height: size)
@@ -300,5 +308,20 @@ final class CubeView: UIView {
         layer.transform = transform
         layer.allowsEdgeAntialiasing = true
         return layer
+    }
+    
+    private func updateTexture() {
+        
+        let topImage = texture.lumberTopImage()
+        let sideImage = texture.lumberSideImage()
+        topLayer.contents = topImage
+        frontLayer.contents = sideImage
+        rightLayer.contents = texture.lumberStrechImage(topImage: topImage, sideImage: sideImage)
+    }
+    
+    @objc private func updateTextureAction() {
+        
+        texture.updateRings()
+        updateTexture()
     }
 }
