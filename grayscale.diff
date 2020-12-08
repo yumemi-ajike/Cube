@@ -1,0 +1,62 @@
+diff --git a/Cube/LumberTexture.swift b/Cube/LumberTexture.swift
+index a5cdbb4..1df3b2c 100644
+--- a/Cube/LumberTexture.swift
++++ b/Cube/LumberTexture.swift
+@@ -116,7 +116,7 @@ extension LumberTexture {
+         context.setFillColor(UIColor(red: baseColorComponents[0],
+                                      green: baseColorComponents[1],
+                                      blue: baseColorComponents[2],
+-                                     alpha: 1).cgColor)
++                                     alpha: 1).convertToGrayScaleColor().cgColor)
+         context.fill(CGRect(x: 0, y: 0, width: side, height: side))
+         
+         // Draw annual tree rings
+@@ -136,7 +136,7 @@ extension LumberTexture {
+                 context.setStrokeColor(UIColor(red: components[0],
+                                                green: components[1],
+                                                blue: components[2],
+-                                               alpha: ring.depth).cgColor)
++                                               alpha: ring.depth).convertToGrayScaleColor().cgColor)
+                 context.strokePath()
+             }
+         }
+@@ -153,7 +153,7 @@ extension LumberTexture {
+         context.setFillColor(UIColor(red: baseColorComponents[0],
+                                      green: baseColorComponents[1],
+                                      blue: baseColorComponents[2],
+-                                     alpha: 1).cgColor)
++                                     alpha: 1).convertToGrayScaleColor().cgColor)
+         context.fill(CGRect(x: 0, y: 0, width: side * sqrt(2), height: side))
+         
+         // Draw smooth annual tree rings
+@@ -170,7 +170,7 @@ extension LumberTexture {
+             context.setStrokeColor(UIColor(red: components[0],
+                                            green: components[1],
+                                            blue: components[2],
+-                                           alpha: ring.depth).cgColor)
++                                           alpha: ring.depth).convertToGrayScaleColor().cgColor)
+             context.strokePath()
+         }
+         
+@@ -188,7 +188,7 @@ extension LumberTexture {
+             context.setStrokeColor(UIColor(red: components[0],
+                                            green: components[1],
+                                            blue: components[2],
+-                                           alpha: ring.depth).cgColor)
++                                           alpha: ring.depth).convertToGrayScaleColor().cgColor)
+             context.strokePath()
+         }
+         
+@@ -301,3 +301,12 @@ extension LumberTexture {
+         return nil
+     }
+ }
++
++extension UIColor {
++    func convertToGrayScaleColor() -> UIColor {
++        var grayscale: CGFloat = 0
++        var alpha: CGFloat = 0
++        self.getWhite(&grayscale, alpha: &alpha)
++        return UIColor(white: grayscale, alpha: alpha)
++    }
++}
