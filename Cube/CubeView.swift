@@ -65,7 +65,7 @@ final class CubeView: UIView {
     lazy var frontTopLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.frame = CGRect(x: -size / 2, y: -size / 2, width: size, height: cornerRadius)
-        layer.colors = [UIColor(white: 1, alpha: 0.8),
+        layer.colors = [UIColor(white: 1, alpha: 0.3),
                         UIColor(white: 1, alpha: 0)].map { $0.cgColor }
         layer.transform = CATransform3DMakeTranslation(size / 2, size / 2, 0)
         layer.allowsEdgeAntialiasing = true
@@ -107,7 +107,7 @@ final class CubeView: UIView {
     lazy var rightTopLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.frame = CGRect(x: -size / 2, y: -size / 2, width: size, height: cornerRadius)
-        layer.colors = [UIColor(white: 1, alpha: 0.8),
+        layer.colors = [UIColor(white: 1, alpha: 0.3),
                         UIColor(white: 1, alpha: 0)].map { $0.cgColor }
         layer.transform = CATransform3DMakeTranslation(size / 2, size / 2, 0)
         layer.allowsEdgeAntialiasing = true
@@ -172,7 +172,7 @@ final class CubeView: UIView {
         let transform = CATransform3DMakeTranslation(size * 1.5 - cornerRadius, size / 2, 0)
         layer.frame = CGRect(x: -size / 2, y: -size / 2, width: cornerRadius, height: size)
         layer.colors = [UIColor(white: 1, alpha: 0),
-                        UIColor(white: 1, alpha: 1)].map { $0.cgColor }
+                        UIColor(white: 1, alpha: 0.3)].map { $0.cgColor }
         layer.startPoint = CGPoint(x: 0, y: 0.5)
         layer.endPoint = CGPoint(x: 1, y: 0.5)
         layer.transform = transform
@@ -183,7 +183,7 @@ final class CubeView: UIView {
         let layer = CAGradientLayer()
         layer.frame = CGRect(x: -size / 2, y: -size / 2, width: size, height: cornerRadius)
         layer.colors = [UIColor(white: 1, alpha: 0),
-                        UIColor(white: 1, alpha: 1)].map { $0.cgColor }
+                        UIColor(white: 1, alpha: 0.3)].map { $0.cgColor }
         layer.transform = CATransform3DMakeTranslation(size / 2, size * 1.5 - cornerRadius, 0)
         layer.allowsEdgeAntialiasing = true
         return layer
