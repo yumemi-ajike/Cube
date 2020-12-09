@@ -17,10 +17,14 @@ final class LumberTexture {
         let colorComponents: [CGFloat]
     }
     let side: CGFloat
-    let baseColorComponents: [CGFloat] = [(226 / 255), (193 / 255), (146 / 255)]
+    let baseColorComponents: [CGFloat] = [(255 / 255), (227 / 255), (220 / 255)]
+    let centerBaseColorComponents: [[CGFloat]] = [
+        [(205 / 255), (175 / 255), (131 / 255)],
+        [(201 / 255), (138 / 255), (40 / 255)],
+    ]
     let smoothRingColorComponents: [CGFloat] = [(199 / 255), (173 / 255), (122 / 255)]
-    let ringColorComponents: [[CGFloat]] = [
-        [(176 / 255), (106 / 255), (71 / 255)],
+    let roughRingColorComponents: [[CGFloat]] = [
+        [(176 / 255), (130 / 255), (71 / 255)],
         [(194 / 255), (158 / 255), (96 / 255)],
     ]
     private var roughRings: [Ring] = []
@@ -36,7 +40,7 @@ final class LumberTexture {
         
         // Restore saved rings from UserDefaults
         if let data = UserDefaults.standard.data(forKey: "SmoothRings"),
-              let rings = try? JSONDecoder().decode([Ring].self, from: data) {
+           let rings = try? JSONDecoder().decode([Ring].self, from: data) {
             
             return rings
         }
@@ -68,7 +72,7 @@ final class LumberTexture {
         
         // Restore saved rings from UserDefaults
         if let data = UserDefaults.standard.data(forKey: "RoughRings"),
-              let rings = try? JSONDecoder().decode([Ring].self, from: data) {
+           let rings = try? JSONDecoder().decode([Ring].self, from: data) {
             
             return rings
         }
@@ -80,7 +84,7 @@ final class LumberTexture {
             let distance = CGFloat(Float.random(in: 5 ... 30))
             let width = CGFloat(Float.random(in: 2 ... 12))
             let depth = CGFloat(Float.random(in: 0.4 ... 0.6))
-            let colorComponents = ringColorComponents[Int.random(in: 0 ... 1)]
+            let colorComponents = roughRingColorComponents[Int.random(in: 0 ... 1)]
             if (pointer + distance + width / 2) < (side * sqrt(2)) {
                 roughRings.append(Ring(distance: distance, width: width, depth: depth, colorComponents: colorComponents))
                 pointer += distance
@@ -119,6 +123,26 @@ extension LumberTexture {
                                      alpha: 1).cgColor)
         context.fill(CGRect(x: 0, y: 0, width: side, height: side))
         
+        if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                                     colors: [
+                                        UIColor(red: centerBaseColorComponents[0][0],
+                                                green: centerBaseColorComponents[0][1],
+                                                blue: centerBaseColorComponents[0][2],
+                                                alpha: 0.3).cgColor,
+                                        UIColor(red: centerBaseColorComponents[1][0],
+                                                green: centerBaseColorComponents[1][1],
+                                                blue: centerBaseColorComponents[1][2],
+                                                alpha: 1).cgColor] as CFArray,
+                                     locations: [0.7, 1.0]) {
+            
+            context.drawRadialGradient(gradient,
+                                       startCenter: CGPoint(x: 0, y: side),
+                                       startRadius: 0,
+                                       endCenter: CGPoint(x: 0, y: side),
+                                       endRadius: side * 0.8,
+                                       options: [.drawsBeforeStartLocation])
+        }
+        
         // Draw annual tree rings
         [smoothRings, roughRings].forEach { rings in
             var pointer: CGFloat = 0
@@ -155,6 +179,24 @@ extension LumberTexture {
                                      blue: baseColorComponents[2],
                                      alpha: 1).cgColor)
         context.fill(CGRect(x: 0, y: 0, width: side * sqrt(2), height: side))
+        
+        if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                                     colors: [
+                                        UIColor(red: centerBaseColorComponents[0][0],
+                                                green: centerBaseColorComponents[0][1],
+                                                blue: centerBaseColorComponents[0][2],
+                                                alpha: 0.3).cgColor,
+                                        UIColor(red: centerBaseColorComponents[1][0],
+                                                green: centerBaseColorComponents[1][1],
+                                                blue: centerBaseColorComponents[1][2],
+                                                alpha: 1).cgColor] as CFArray,
+                                     locations: [0.7, 1.0]) {
+            
+            context.drawLinearGradient(gradient,
+                                       start: CGPoint.zero,
+                                       end: CGPoint(x: side * 0.8, y: 0),
+                                       options: [.drawsBeforeStartLocation])
+        }
         
         // Draw smooth annual tree rings
         var pointer: CGFloat = 0
