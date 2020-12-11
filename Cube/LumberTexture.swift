@@ -16,24 +16,53 @@ final class LumberTexture {
         let depth: CGFloat
         let colorComponents: [CGFloat]
     }
+    struct Base: Codable {
+        let colorComponents: [CGFloat]
+        let centerColorComponents: [[CGFloat]]
+        let gradientLocations: [CGFloat]
+        let centerGradientRadius: CGFloat
+        
+        static var `default`: Base {
+            return .init(colorComponents: [], centerColorComponents: [], gradientLocations: [], centerGradientRadius: 0)
+        }
+    }
+    
     let side: CGFloat
-    let baseColorComponents: [CGFloat] = [(255 / 255), (227 / 255), (220 / 255)]
-    let centerBaseColorComponents: [[CGFloat]] = [
-        [(205 / 255), (175 / 255), (131 / 255)],
-        [(201 / 255), (138 / 255), (40 / 255)],
-    ]
-    let smoothRingColorComponents: [CGFloat] = [(199 / 255), (173 / 255), (122 / 255)]
-    let roughRingColorComponents: [[CGFloat]] = [
-        [(176 / 255), (130 / 255), (71 / 255)],
-        [(194 / 255), (158 / 255), (96 / 255)],
-    ]
+    private var colorSet: LumberColorSet = LumberColorSet.default
+    private var base: Base = Base.default
     private var roughRings: [Ring] = []
     private var smoothRings: [Ring] = []
     
     init(side: CGFloat) {
         self.side = side
+        self.base = createBase()
         self.smoothRings = createSmoothRings()
         self.roughRings = createRoughRings()
+    }
+    
+    private func createBase() -> Base {
+        
+        // Resore saved base from UserDefaults
+        if let data = UserDefaults.standard.data(forKey: "Base"),
+           let base = try? JSONDecoder().decode(Base.self, from: data) {
+            
+            return base
+        }
+        
+        let locations: [CGFloat] = [
+            CGFloat(Float.random(in: 0.5 ... 0.8)),
+            CGFloat(Float.random(in: 0.8 ... 1.0))
+        ]
+        let radius: CGFloat = CGFloat(Float.random(in: 0.6 ... 1.0))
+        self.base = Base(colorComponents: colorSet.baseColorComponents,
+                         centerColorComponents: colorSet.centerBaseColorComponents,
+                         gradientLocations: locations,
+                         centerGradientRadius: radius)
+        
+        // Save base to UserDefaults
+        UserDefaults.standard.setValue(try? JSONEncoder().encode(base), forKey: "Base")
+        
+        return base
     }
     
     private func createSmoothRings() -> [Ring] {
@@ -52,7 +81,7 @@ final class LumberTexture {
             let distance = CGFloat(Float.random(in: 2 ... 3))
             let width = CGFloat(Float.random(in: 0.5 ... 2))
             let depth = CGFloat(Float.random(in: 0.8 ... 1.0))
-            let colorComponents = smoothRingColorComponents
+            let colorComponents = colorSet.smoothRingColorComponents
             if (pointer + distance + width / 2) < (side * sqrt(2)) {
                 smoothRings.append(Ring(distance: distance, width: width, depth: depth, colorComponents: colorComponents))
                 pointer += distance
@@ -84,7 +113,7 @@ final class LumberTexture {
             let distance = CGFloat(Float.random(in: 5 ... 30))
             let width = CGFloat(Float.random(in: 2 ... 12))
             let depth = CGFloat(Float.random(in: 0.4 ... 0.6))
-            let colorComponents = roughRingColorComponents[Int.random(in: 0 ... 1)]
+            let colorComponents = colorSet.roughRingColorComponents[Int.random(in: 0 ... 1)]
             if (pointer + distance + width / 2) < (side * sqrt(2)) {
                 roughRings.append(Ring(distance: distance, width: width, depth: depth, colorComponents: colorComponents))
                 pointer += distance
@@ -102,8 +131,10 @@ final class LumberTexture {
     
     func updateRings() {
         
+        UserDefaults.standard.removeObject(forKey: "Base")
         UserDefaults.standard.removeObject(forKey: "SmoothRings")
         UserDefaults.standard.removeObject(forKey: "RoughRings")
+        self.base = createBase()
         self.smoothRings = createSmoothRings()
         self.roughRings = createRoughRings()
     }
@@ -117,29 +148,29 @@ extension LumberTexture {
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         
         // Draw base color
-        context.setFillColor(UIColor(red: baseColorComponents[0],
-                                     green: baseColorComponents[1],
-                                     blue: baseColorComponents[2],
+        context.setFillColor(UIColor(red: base.colorComponents[0],
+                                     green: base.colorComponents[1],
+                                     blue: base.colorComponents[2],
                                      alpha: 1).cgColor)
         context.fill(CGRect(x: 0, y: 0, width: side, height: side))
         
         if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
                                      colors: [
-                                        UIColor(red: centerBaseColorComponents[0][0],
-                                                green: centerBaseColorComponents[0][1],
-                                                blue: centerBaseColorComponents[0][2],
+                                        UIColor(red: base.centerColorComponents[0][0],
+                                                green: base.centerColorComponents[0][1],
+                                                blue: base.centerColorComponents[0][2],
                                                 alpha: 0.3).cgColor,
-                                        UIColor(red: centerBaseColorComponents[1][0],
-                                                green: centerBaseColorComponents[1][1],
-                                                blue: centerBaseColorComponents[1][2],
+                                        UIColor(red: base.centerColorComponents[1][0],
+                                                green: base.centerColorComponents[1][1],
+                                                blue: base.centerColorComponents[1][2],
                                                 alpha: 1).cgColor] as CFArray,
-                                     locations: [0.7, 1.0]) {
+                                     locations: base.gradientLocations) {
             
             context.drawRadialGradient(gradient,
                                        startCenter: CGPoint(x: 0, y: side),
                                        startRadius: 0,
                                        endCenter: CGPoint(x: 0, y: side),
-                                       endRadius: side * 0.8,
+                                       endRadius: side * base.centerGradientRadius,
                                        options: [.drawsBeforeStartLocation])
         }
         
@@ -174,27 +205,27 @@ extension LumberTexture {
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         
         // Draw base color
-        context.setFillColor(UIColor(red: baseColorComponents[0],
-                                     green: baseColorComponents[1],
-                                     blue: baseColorComponents[2],
+        context.setFillColor(UIColor(red: base.colorComponents[0],
+                                     green: base.colorComponents[1],
+                                     blue: base.colorComponents[2],
                                      alpha: 1).cgColor)
         context.fill(CGRect(x: 0, y: 0, width: side * sqrt(2), height: side))
         
         if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
                                      colors: [
-                                        UIColor(red: centerBaseColorComponents[0][0],
-                                                green: centerBaseColorComponents[0][1],
-                                                blue: centerBaseColorComponents[0][2],
+                                        UIColor(red: base.centerColorComponents[0][0],
+                                                green: base.centerColorComponents[0][1],
+                                                blue: base.centerColorComponents[0][2],
                                                 alpha: 0.3).cgColor,
-                                        UIColor(red: centerBaseColorComponents[1][0],
-                                                green: centerBaseColorComponents[1][1],
-                                                blue: centerBaseColorComponents[1][2],
+                                        UIColor(red: base.centerColorComponents[1][0],
+                                                green: base.centerColorComponents[1][1],
+                                                blue: base.centerColorComponents[1][2],
                                                 alpha: 1).cgColor] as CFArray,
-                                     locations: [0.7, 1.0]) {
+                                     locations: base.gradientLocations) {
             
             context.drawLinearGradient(gradient,
                                        start: CGPoint.zero,
-                                       end: CGPoint(x: side * 0.8, y: 0),
+                                       end: CGPoint(x: side * base.centerGradientRadius, y: 0),
                                        options: [.drawsBeforeStartLocation])
         }
         
