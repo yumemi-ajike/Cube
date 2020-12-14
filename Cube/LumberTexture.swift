@@ -196,6 +196,22 @@ extension LumberTexture {
             }
         }
         
+        // Draw scratch
+        var pointer: CGFloat = 0
+        repeat {
+            
+            context.setLineWidth(1)
+            let startPoint = CGPoint(x: 0, y: pointer * sqrt(2))
+            let endPoint = CGPoint(x: pointer * sqrt(2), y: 0)
+            context.move(to: startPoint)
+            context.addLine(to: endPoint)
+            let alpha = (1 - pointer / side * sqrt(2))
+            context.setStrokeColor(UIColor(white: 1, alpha: alpha).cgColor)
+            context.strokePath()
+            
+            pointer += 6
+        } while(pointer < side * sqrt(2))
+        
         return context.makeImage()
     }
     
