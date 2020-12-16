@@ -324,4 +324,13 @@ final class CubeView: UIView {
         texture.updateRings()
         updateTexture()
     }
+    
+    func updateTextureColorSet(with image: UIImage) {
+        
+        if let colorSet = LumberColorSet(image: image) {
+            texture.setColorSet(colorSet: colorSet)
+            texture.updateRings()
+            updateTexture()
+        }
+    }
 }

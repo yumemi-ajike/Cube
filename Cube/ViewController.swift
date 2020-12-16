@@ -33,5 +33,15 @@ class ViewController: UIViewController {
             cubeView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             cubeView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         ])
+        
+        view.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(takeLumberColors)))
+    }
+    
+    @objc private func takeLumberColors(sender: UILongPressGestureRecognizer) {
+        
+        if case .began = sender.state,
+           let image = UIImage(named: "Sample") {
+            cubeView.updateTextureColorSet(with: image)
+        }
     }
 }

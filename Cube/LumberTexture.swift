@@ -129,6 +129,11 @@ final class LumberTexture {
         return roughRings
     }
     
+    func setColorSet(colorSet: LumberColorSet) {
+        
+        self.colorSet = colorSet
+    }
+    
     func updateRings() {
         
         UserDefaults.standard.removeObject(forKey: "Base")
